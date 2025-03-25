@@ -13,7 +13,7 @@ from image_processing import load_initial_image, generate_structured_description
 
 # Set up configuration.
 config = {
-    "model_weights": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0",
+    "model_weights": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
     "seed": 1999,
     "guidance_scale": 1.5,
     "num_inference_steps": 25,
