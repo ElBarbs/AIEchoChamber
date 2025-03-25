@@ -10,7 +10,9 @@ virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/files $SLURM_TMPDIR/AIEchoChamber
 cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
+ls
 cd $SLURM_TMPDIR/AIEchoChamber/files
+ls
 pip install --no-index --upgrade pip
 pip install --no-index -r requirements.txt
 pip install compel-2.0.3-py3-none-any.whl
