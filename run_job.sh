@@ -17,4 +17,5 @@ pip install --no-index --upgrade pip
 pip install --no-index -r requirements.txt
 pip install --no-index compel-2.0.3-py3-none-any.whl
 python main.py --input "flowers.jpg"
+wait
 cp -r $SLURM_TMPDIR/AIEchoChamber/files/output /project/def-vigliens/lbarbier/AIEchoChamber/output
