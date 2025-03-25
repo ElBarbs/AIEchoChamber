@@ -3,7 +3,7 @@
 #SBATCH --gpus-per-node=2
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=32000M
-#SBATCH --time=30:00:00
+#SBATCH --time=40:00:00
 
 module load python/3.12.4
 virtualenv --no-download $SLURM_TMPDIR/env
