@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --account=lbarbier
+#SBATCH --account=def-vigliens
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=6
 #SBATCH --mem=20000M
