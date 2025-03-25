@@ -8,14 +8,13 @@
 module load python/3.12.4
 virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
-cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/files $SLURM_TMPDIR/AIEchoChamber
-cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
+mkdir $SLURM_TMPDIR/AIEchoChamber
+cp -r /project/def-vigliens/lbarbier/AIEchoChamber/files $SLURM_TMPDIR/AIEchoChamber
+cp -r /project/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
 wait
-ls
 cd $SLURM_TMPDIR/AIEchoChamber/files
-ls
 pip install --no-index --upgrade pip
 pip install --no-index -r requirements.txt
 pip install compel-2.0.3-py3-none-any.whl
 python main.py --input "flowers.jpg"
-cp -r $SLURM_TMPDIR/AIEchoChamber/files/output /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/output
+cp -r $SLURM_TMPDIR/AIEchoChamber/files/output /project/def-vigliens/lbarbier/AIEchoChamber/output
