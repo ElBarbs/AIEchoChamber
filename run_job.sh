@@ -2,7 +2,7 @@
 #SBATCH --account=def-vigliens
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=6
-#SBATCH --mem=10000M
+#SBATCH --mem=25000M
 #SBATCH --time=00:10:00
 
 module load python/3.12.4
