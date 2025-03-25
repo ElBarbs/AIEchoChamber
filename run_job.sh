@@ -10,6 +10,7 @@ virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/files $SLURM_TMPDIR/AIEchoChamber
 cp -r /home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
+wait
 ls
 cd $SLURM_TMPDIR/AIEchoChamber/files
 ls
