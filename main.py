@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 AI Echo Chamber - Main Script
 This script orchestrates the AI Echo Chamber process by running multiple iterations
 of image-to-description-to-image transformations.
 """
 
-import os
 import torch
 import argparse
 from pathlib import Path
@@ -14,15 +11,12 @@ from pathlib import Path
 from model_setup import load_models, setup_openai_client
 from image_processing import load_initial_image, generate_structured_description
 
-# Set environment variable for Hugging Face
-os.environ["HF_HUB_ENABLE_HF_TRANSFER"] = "1"
-
-# Set up configuration
+# Set up configuration.
 config = {
-    "model_checkpoint": "stabilityai/stable-diffusion-xl-base-1.0",
+    "model_weights": "/home/lbarbier/projects/def-vigliens/lbarbier/AIEchoChamber/huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0",
     "seed": 1999,
     "guidance_scale": 1.5,
-    "num_inference_steps": 100,
+    "num_inference_steps": 25,
     "scheduler_kwargs": {
         "beta_end": 0.012,
         "beta_schedule": "scaled_linear",
@@ -37,7 +31,7 @@ config = {
     }
 }
 
-# Main recursive echo chamber process
+# Main recursive echo chamber process.
 
 
 def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
@@ -58,11 +52,11 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
     generator = [torch.Generator(device=str(
         device)).manual_seed(config["seed"])]
 
-    # Create output directory if it doesn't exist
+    # Create output directory if it doesn't exist.
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Save the initial image
+    # Save the initial image.
     initial_image_path = output_dir / "iteration_0_input.png"
     initial_image.save(initial_image_path)
     print(f"Saved initial image to {initial_image_path}")
@@ -71,12 +65,12 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
         0: {"image": initial_image, "description": None}
     }
 
-    # Generate description for initial image
+    # Generate description for initial image.
     current_description = generate_structured_description(
         initial_image, openai_client)
     results[0]["description"] = current_description
 
-    # Save initial description
+    # Save initial description.
     with open(output_dir / "iteration_0_description.txt", "w") as f:
         f.write(current_description)
     print(
@@ -85,42 +79,42 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
     for i in range(1, iterations + 1):
         print(f"\nProcessing iteration {i}/{iterations}...")
 
-        # Use the full description as the prompt
+        # Use the full description as the prompt.
         results[i] = {"image": None, "description": None}
 
-        # Process the prompt with compel
-        prompt, pooled = compel_proc(current_description)
-        negative_prompt, negative_pooled = compel_proc("lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature")
-        prompt, negative_prompt = compel_proc.pad_conditioning_tensors_to_same_length([
-                                                                                      prompt, negative_prompt])
+        # Process the prompt with compel.
+        prompt_embeds, pooled_embeds = compel_proc(current_description)
+        neg_prompt_embeds, neg_pooled_embeds = compel_proc(
+            "lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, poorly drawn hands, poorly drawn face, mutation, deformed, blurry, dehydrated, bad anatomy, bad proportions, extra limbs, cloned face, disfigured, gross proportions, malformed limbs, missing arms, missing legs, extra arms, extra legs, fused fingers, too many fingers, long neck, username, watermark, signature")
+        prompt_embeds, neg_prompt_embeds = compel_proc.pad_conditioning_tensors_to_same_length(
+            [prompt_embeds, neg_prompt_embeds])
 
-        # Generate a new image using the processed prompt embeddings
-        with torch.no_grad():
-            output = text2img_pipe(
-                prompt_embeds=prompt,
-                pooled_prompt_embeds=pooled,
-                negative_prompt_embeds=negative_prompt,
-                negative_pooled_prompt_embeds=negative_pooled,
-                output_type="pil",
-                guidance_scale=config["guidance_scale"],
-                num_inference_steps=config["num_inference_steps"],
-                generator=generator,
-            )
+        # Generate a new image using the processed prompt embeddings.
+        output = text2img_pipe(
+            prompt_embeds=prompt_embeds,
+            pooled_prompt_embeds=pooled_embeds,
+            negative_prompt_embeds=neg_prompt_embeds,
+            negative_pooled_prompt_embeds=neg_pooled_embeds,
+            output_type="pil",
+            guidance_scale=config["guidance_scale"],
+            num_inference_steps=config["num_inference_steps"],
+            generator=generator,
+        )
 
         new_image = output.images[0]
         results[i]["image"] = new_image
 
-        # Save the generated image
+        # Save the generated image.
         image_path = output_dir / f"iteration_{i}_image.png"
         new_image.save(image_path)
         print(f"Saved generated image to {image_path}")
 
-        # Generate a new description based on the new image
+        # Generate a new description based on the new image.
         current_description = generate_structured_description(
             new_image, openai_client)
         results[i]["description"] = current_description
 
-        # Save the description
+        # Save the description.
         description_path = output_dir / f"iteration_{i}_description.txt"
         with open(description_path, "w") as f:
             f.write(current_description)
@@ -132,7 +126,7 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
 
 
 def main():
-    # Parse command line arguments
+    # Parse command line arguments.
     parser = argparse.ArgumentParser(
         description='AI Echo Chamber: Iterative image-to-description-to-image transformation')
     parser.add_argument('--input', '-i', type=str,
@@ -143,18 +137,18 @@ def main():
                         default=20, help='Number of iterations to run')
     args = parser.parse_args()
 
-    # Print device information
+    # Print device information.
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    # Set up OpenAI client
+    # Set up OpenAI client.
     openai_client = setup_openai_client()
 
-    # Load initial image
+    # Load initial image.
     initial_image = load_initial_image(args.input)
     print(f"Loaded initial image from {args.input}")
 
-    # Run the echo chamber process
+    # Run the echo chamber process.
     print(f"Will run {args.iterations} iterations of the AI Echo Chamber")
     print(f"Saving results to {args.output}")
 

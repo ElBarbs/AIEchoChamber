@@ -1,6 +1,6 @@
 """
 Image Processing Module
-Contains functions for processing and describing images
+Contains functions for processing and describing images.
 """
 
 import io
@@ -10,18 +10,18 @@ from PIL import Image
 
 def load_initial_image(image_path):
     """
-    Loads and preprocesses the initial image
+    Loads and preprocesses the initial image.
 
     Args:
-        image_path: Path to the input image file
+        image_path: Path to the input image file.
 
     Returns:
-        PIL.Image: The processed initial image
+        PIL.Image: The processed initial image.
     """
-    # Open the provided image
+    # Open the provided image.
     image = Image.open(image_path)
 
-    # Resize image to work with the model
+    # Resize image to work with the model.
     max_size = 512
     image = image.convert("RGB")
     width, height = image.size
@@ -41,21 +41,21 @@ def load_initial_image(image_path):
 
 def generate_structured_description(image, openai_client):
     """
-    Generate a detailed structured description of the image using GPT-4o.
+    Generate a detailed structured description of the image using GPT-4o-mini.
 
     Args:
-        image: PIL Image object
-        openai_client: OpenAI client
+        image: PIL Image object.
+        openai_client: OpenAI client.
 
     Returns:
         str: Detailed description of the image.
     """
-    # Convert image to base64 for API
+    # Convert image to base64 for API.
     buffered = io.BytesIO()
     image.save(buffered, format="JPEG")
     base64_image = base64.b64encode(buffered.getvalue()).decode('utf-8')
 
-    # Call OpenAI API with GPT-4o
+    # Call OpenAI API with GPT-4o-mini.
     response = openai_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -84,7 +84,7 @@ def generate_structured_description(image, openai_client):
             }
         ],
         temperature=1.25,
-        max_completion_tokens=500
+        max_completion_tokens=600
     )
 
     return response.choices[0].message.content

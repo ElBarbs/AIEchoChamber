@@ -1,7 +1,7 @@
-compel>=2.0.1
 torch>=2.0.0
 diffusers>=0.24.0
 transformers>=4.30.0
 openai>=1.0.0
 pillow>=9.3.0
 numpy>=1.24.0
+python-dotenv>=1.0.0
