@@ -4,6 +4,7 @@ This script orchestrates the AI Echo Chamber process by running multiple iterati
 of image-to-description-to-image transformations.
 """
 
+import random
 import torch
 import argparse
 from pathlib import Path
@@ -14,8 +15,8 @@ from image_processing import load_initial_image, generate_structured_description
 # Set up configuration.
 config = {
     "model_weights": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
-    "seed": 1999,
-    "guidance_scale": 1.5,
+    "guidance_scale_min": 0.5,
+    "guidance_scale_max": 2,
     "num_inference_steps": 25,
     "scheduler_kwargs": {
         "beta_end": 0.012,
@@ -49,8 +50,6 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
     """
     text2img_pipe, compel_proc = load_models(config)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    generator = [torch.Generator(device=str(
-        device)).manual_seed(config["seed"])]
 
     # Create output directory if it doesn't exist.
     output_dir = Path(output_dir)
@@ -96,9 +95,9 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
             negative_prompt_embeds=neg_prompt_embeds,
             negative_pooled_prompt_embeds=neg_pooled_embeds,
             output_type="pil",
-            guidance_scale=config["guidance_scale"],
+            guidance_scale=random.uniform(
+                config["guidance_scale_min"], config["guidance_scale_max"]),
             num_inference_steps=config["num_inference_steps"],
-            generator=generator,
         )
 
         new_image = output.images[0]
