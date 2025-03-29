@@ -15,8 +15,8 @@ from image_processing import load_initial_image, generate_structured_description
 # Set up configuration.
 config = {
     "model_weights": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
-    "guidance_scale_min": 0.5,
-    "guidance_scale_max": 2,
+    "guidance_scale_min": 5,
+    "guidance_scale_max": 8,
     "num_inference_steps": 25,
     "scheduler_kwargs": {
         "beta_end": 0.012,
