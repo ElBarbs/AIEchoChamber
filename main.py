@@ -7,6 +7,7 @@ of image-to-description-to-image transformations.
 import random
 import torch
 import argparse
+import json
 from pathlib import Path
 
 from model_setup import load_models, setup_openai_client
@@ -55,6 +56,9 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    # Create a JSONL file to store all descriptions.
+    descriptions_file = output_dir / "descriptions.jsonl"
+
     # Save the initial image.
     initial_image_path = output_dir / "iteration_0_input.png"
     initial_image.save(initial_image_path)
@@ -69,11 +73,17 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
         initial_image, openai_client)
     results[0]["description"] = current_description
 
-    # Save initial description.
-    with open(output_dir / "iteration_0_description.txt", "w") as f:
-        f.write(current_description)
-    print(
-        f"Saved initial description to {output_dir / 'iteration_0_description.txt'}")
+    # Save initial description to JSONL file.
+    with open(descriptions_file, "w") as f:
+        json.dump({
+            "iteration": 0,
+            "type": "input",
+            "description": current_description,
+            "image_path": str(initial_image_path)
+        }, f)
+        f.write("\n")
+
+    print(f"Saved initial description to {descriptions_file}")
 
     for i in range(1, iterations + 1):
         print(f"\nProcessing iteration {i}/{iterations}...")
@@ -113,12 +123,19 @@ def run_echo_chamber(initial_image, openai_client, output_dir, iterations=3):
             new_image, openai_client)
         results[i]["description"] = current_description
 
-        # Save the description.
-        description_path = output_dir / f"iteration_{i}_description.txt"
-        with open(description_path, "w") as f:
-            f.write(current_description)
-        print(f"Saved description to {description_path}")
+        # Append the description to the JSONL file.
+        with open(descriptions_file, "a") as f:
+            json.dump({
+                "iteration": i,
+                "type": "generated",
+                "description": current_description,
+                "image_path": str(image_path),
+                # Include the prompt that generated this image
+                "prompt": results[i-1]["description"]
+            }, f)
+            f.write("\n")
 
+        print(f"Appended description to {descriptions_file}")
         print(f"Completed iteration {i}/{iterations}")
 
     return results
