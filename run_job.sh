@@ -5,7 +5,7 @@
 #SBATCH --mem=32000M
 #SBATCH --time=40:00:00
 
-module load python/3.12.4
+module load python-build-bundle/2025a
 virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 mkdir $SLURM_TMPDIR/AIEchoChamber
