@@ -16,7 +16,7 @@ cd $SLURM_TMPDIR/AIEchoChamber/files
 pip install --no-index --upgrade pip
 pip install --no-index -r requirements.txt
 pip install --no-index compel-2.0.3-py3-none-any.whl
-pip install --no-index transformers-4.50.3-py3-none-any.whl
+pip install transformers==4.50.3
 python main.py --input "friends.jpg" --iterations 2000
 wait
 cp -r $SLURM_TMPDIR/AIEchoChamber/files/output /project/def-vigliens/lbarbier/AIEchoChamber/output
