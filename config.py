@@ -29,10 +29,20 @@ MODEL_CONFIG = {
                 "use_karras_sigmas": False,
             }
         },
-        "flux": {
+        "flux-dev": {
             "model_id": "black-forest-labs/FLUX.1-dev",
-            "use_compel": False,  # Don't use Compel
-            "custom_scheduler": False,  # Use default scheduler
+            "use_compel": False,
+            "custom_scheduler": False,
+        },
+        "flux-schnell": {
+            "model_id": "black-forest-labs/FLUX.1-schnell",
+            "use_compel": False,
+            "custom_scheduler": False,
+        },
+        "stable-diffusion-3.5": {
+            "model_id": "stabilityai/stable-diffusion-3.5-large",
+            "use_compel": False,
+            "custom_scheduler": False,
         }
     },
     "default_txt2img_model": "stable-diffusion-xl",
