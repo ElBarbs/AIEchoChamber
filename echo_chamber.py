@@ -18,7 +18,7 @@ class EchoChamber:
     of image-to-description-to-image transformations.
     """
 
-    def __init__(self, initial_image, output_dir, description_type="florence2"):
+    def __init__(self, initial_image, output_dir, description_type="florence2", txt2img_model=None):
         """
         Initialize the Echo Chamber process.
 
@@ -34,6 +34,12 @@ class EchoChamber:
 
         # Create output directory
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Set current text-to-image model in config
+        if txt2img_model:
+            MODEL_CONFIG["current_txt2img_model"] = txt2img_model
+        else:
+            MODEL_CONFIG["current_txt2img_model"] = MODEL_CONFIG["default_txt2img_model"]
 
         # Initialize description file
         self.descriptions_file = self.output_dir / "descriptions.jsonl"
@@ -51,6 +57,13 @@ class EchoChamber:
 
         # Load text-to-image model
         self.text2img_pipe, self.compel_proc = model_manager.text2img_model
+
+        # Get model info
+        model_name = MODEL_CONFIG["current_txt2img_model"]
+        if self.compel_proc is None:
+            print(f"Using {model_name} without Compel processing.")
+        else:
+            print(f"Using {model_name} with Compel processing.")
 
     def run(self, iterations=1):
         """
@@ -149,29 +162,42 @@ class EchoChamber:
         Returns:
             PIL.Image: Generated image
         """
-        # Process the prompt with compel
-        prompt_embeds, pooled_embeds = self.compel_proc(prompt)
-        neg_prompt_embeds, neg_pooled_embeds = self.compel_proc(
-            DEFAULT_NEGATIVE_PROMPT)
+        # Generate image
+        if self.compel_proc is None:
+            # Model without Compel - pass prompt directly
+            output = self.text2img_pipe(
+                prompt=prompt,
+                negative_prompt=DEFAULT_NEGATIVE_PROMPT,
+                output_type="pil",
+                guidance_scale=random.uniform(
+                    MODEL_CONFIG["guidance_scale_min"],
+                    MODEL_CONFIG["guidance_scale_max"]
+                ),
+                num_inference_steps=MODEL_CONFIG["num_inference_steps"],
+            )
+        else:
+            # Process the prompt with compel
+            prompt_embeds, pooled_embeds = self.compel_proc(prompt)
+            neg_prompt_embeds, neg_pooled_embeds = self.compel_proc(
+                DEFAULT_NEGATIVE_PROMPT)
 
-        # Pad embeddings to same length
-        prompt_embeds, neg_prompt_embeds = self.compel_proc.pad_conditioning_tensors_to_same_length(
-            [prompt_embeds, neg_prompt_embeds]
-        )
+            # Pad embeddings to same length
+            prompt_embeds, neg_prompt_embeds = self.compel_proc.pad_conditioning_tensors_to_same_length(
+                [prompt_embeds, neg_prompt_embeds]
+            )
 
-        # Generate a new image
-        output = self.text2img_pipe(
-            prompt_embeds=prompt_embeds,
-            pooled_prompt_embeds=pooled_embeds,
-            negative_prompt_embeds=neg_prompt_embeds,
-            negative_pooled_prompt_embeds=neg_pooled_embeds,
-            output_type="pil",
-            guidance_scale=random.uniform(
-                MODEL_CONFIG["guidance_scale_min"],
-                MODEL_CONFIG["guidance_scale_max"]
-            ),
-            num_inference_steps=MODEL_CONFIG["num_inference_steps"],
-        )
+            output = self.text2img_pipe(
+                prompt_embeds=prompt_embeds,
+                pooled_prompt_embeds=pooled_embeds,
+                negative_prompt_embeds=neg_prompt_embeds,
+                negative_pooled_prompt_embeds=neg_pooled_embeds,
+                output_type="pil",
+                guidance_scale=random.uniform(
+                    MODEL_CONFIG["guidance_scale_min"],
+                    MODEL_CONFIG["guidance_scale_max"]
+                ),
+                num_inference_steps=MODEL_CONFIG["num_inference_steps"],
+            )
 
         return output.images[0]
 

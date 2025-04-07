@@ -53,6 +53,14 @@ def parse_arguments():
         help='Vision model to use for descriptions (default: florence2)'
     )
 
+    parser.add_argument(
+        '--txt2img-model', '-t',
+        type=str,
+        default='stable-diffusion-xl',
+        choices=['stable-diffusion-xl', 'flux'],
+        help='Text-to-image model to use (default: stable-diffusion-xl)'
+    )
+
     return parser.parse_args()
 
 
@@ -75,30 +83,32 @@ def main():
     print_system_info()
 
     try:
-        # Convert output path to Path object
+        # Convert output path to Path object.
         output_dir = Path(args.output)
 
-        # Create a unique directory for this run based on the input filename
+        # Create a unique directory for this run based on the input filename.
         input_path = Path(args.input)
         run_name = input_path.stem
         run_output_dir = output_dir / run_name
 
-        # Load initial image
+        # Load initial image.
         print(f"Loading initial image from {args.input}")
         initial_image = load_initial_image(args.input)
 
-        # Create and run the echo chamber
+        # Initialize the echo chamber.
         echo_chamber = EchoChamber(
             initial_image=initial_image,
             output_dir=run_output_dir,
-            description_type=args.vision
+            description_type=args.vision,
+            txt2img_model=args.txt2img_model,
         )
 
         print(f"Starting Echo Chamber with {args.iterations} iterations")
         print(f"Using {args.vision} for image description")
         print(f"Saving results to {run_output_dir}")
 
-        results = echo_chamber.run(iterations=args.iterations)
+        # Run the process.
+        echo_chamber.run(iterations=args.iterations)
 
         print(f"All iterations completed. Results saved to {run_output_dir}")
 

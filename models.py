@@ -50,30 +50,56 @@ class ModelManager:
         return self._openai_client
 
     def _load_text2img_model(self):
-        """Loads Stable Diffusion model and Compel processor."""
-        print(
-            f"Loading Stable Diffusion model on {self.device} (this may take a few minutes)...")
+        """Loads text-to-image model based on configuration."""
+        # Get current model configuration
+        model_name = MODEL_CONFIG.get(
+            "current_txt2img_model", MODEL_CONFIG["default_txt2img_model"])
+        model_config = MODEL_CONFIG["txt2img_models"][model_name]
+        model_id = model_config["model_id"]
 
-        # Load Stable Diffusion with specific precision settings
+        print(
+            f"Loading {model_name} model ({model_id}) on {self.device} (this may take a few minutes)...")
+
+        # Set up pipeline args
+        pipe_kwargs = {
+            "torch_dtype": self.torch_dtype,
+            "use_safetensors": True,
+        }
+
+        # Add custom scheduler if specified
+        if model_config.get("custom_scheduler", False):
+            scheduler_type = model_config.get(
+                "scheduler", "EulerDiscreteScheduler")
+            scheduler_kwargs = model_config.get("scheduler_kwargs", {})
+
+            # Create the appropriate scheduler
+            if scheduler_type == "EulerDiscreteScheduler":
+                scheduler = EulerDiscreteScheduler(**scheduler_kwargs)
+            else:
+                # Default to EulerDiscreteScheduler if unknown type
+                scheduler = EulerDiscreteScheduler(**scheduler_kwargs)
+
+            pipe_kwargs["scheduler"] = scheduler
+
+        # Load the model
         self._text2img_pipe = DiffusionPipeline.from_pretrained(
-            MODEL_CONFIG["txt2img_weights"],
-            torch_dtype=self.torch_dtype,
-            use_safetensors=True,
-            scheduler=EulerDiscreteScheduler(
-                **MODEL_CONFIG["scheduler_kwargs"]),
+            model_id,
+            **pipe_kwargs
         ).to(self.device)
 
-        # Initialize Compel
-        self._compel_proc = Compel(
-            tokenizer=[self._text2img_pipe.tokenizer,
-                       self._text2img_pipe.tokenizer_2],
-            text_encoder=[self._text2img_pipe.text_encoder,
-                          self._text2img_pipe.text_encoder_2],
-            returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
-            requires_pooled=[False, True]
-        )
+        # Initialize Compel if needed
+        self._compel_proc = None
+        if model_config.get("use_compel", False):
+            self._compel_proc = Compel(
+                tokenizer=[self._text2img_pipe.tokenizer,
+                           self._text2img_pipe.tokenizer_2],
+                text_encoder=[self._text2img_pipe.text_encoder,
+                              self._text2img_pipe.text_encoder_2],
+                returned_embeddings_type=ReturnedEmbeddingsType.PENULTIMATE_HIDDEN_STATES_NON_NORMALIZED,
+                requires_pooled=[False, True]
+            )
 
-        print("Stable Diffusion model loaded successfully!")
+        print(f"{model_name} model loaded successfully!")
 
     def _load_vision_model(self):
         """Loads the vision model for image processing."""

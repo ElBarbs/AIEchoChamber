@@ -11,7 +11,31 @@ DEFAULT_OUTPUT_DIR = BASE_DIR / "output"
 
 # Model configuration
 MODEL_CONFIG = {
-    "txt2img_weights": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
+    "txt2img_models": {
+        "stable-diffusion-xl": {
+            "model_id": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
+            "use_compel": True,  # Use Compel for prompt processing
+            "custom_scheduler": True,  # Use custom scheduler
+            "scheduler": "EulerDiscreteScheduler",  # Type of scheduler to use
+            "scheduler_kwargs": {
+                "beta_schedule": "scaled_linear",
+                "beta_start": 0.00085,
+                "interpolation_type": "linear",
+                "num_train_timesteps": 1000,
+                "prediction_type": "epsilon",
+                "steps_offset": 1,
+                "timestep_spacing": "leading",
+                "trained_betas": None,
+                "use_karras_sigmas": False,
+            }
+        },
+        "flux": {
+            "model_id": "black-forest-labs/FLUX.1-dev",
+            "use_compel": False,  # Don't use Compel
+            "custom_scheduler": False,  # Use default scheduler
+        }
+    },
+    "default_txt2img_model": "stable-diffusion-xl",
     "vision_models": {
         "florence2": {
             "model_id": "microsoft/Florence-2-large",
@@ -25,19 +49,7 @@ MODEL_CONFIG = {
     },
     "guidance_scale_min": 5,
     "guidance_scale_max": 8,
-    "num_inference_steps": 50,
-    "scheduler_kwargs": {
-        "beta_end": 0.012,
-        "beta_schedule": "scaled_linear",
-        "beta_start": 0.00085,
-        "interpolation_type": "linear",
-        "num_train_timesteps": 1000,
-        "prediction_type": "epsilon",
-        "steps_offset": 1,
-        "timestep_spacing": "leading",
-        "trained_betas": None,
-        "use_karras_sigmas": False,
-    }
+    "num_inference_steps": 40
 }
 
 # Default negative prompt for stable diffusion
