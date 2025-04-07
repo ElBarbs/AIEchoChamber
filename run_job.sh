@@ -10,7 +10,7 @@ virtualenv --no-download $SLURM_TMPDIR/env
 source $SLURM_TMPDIR/env/bin/activate
 mkdir $SLURM_TMPDIR/AIEchoChamber
 cp -r /project/def-vigliens/lbarbier/AIEchoChamber/files $SLURM_TMPDIR/AIEchoChamber
-cp -r /project/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
+#cp -r /project/def-vigliens/lbarbier/AIEchoChamber/huggingface $SLURM_TMPDIR/AIEchoChamber
 wait
 cd $SLURM_TMPDIR/AIEchoChamber/files
 pip install --no-index --upgrade pip
