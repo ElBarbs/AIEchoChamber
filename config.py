@@ -64,7 +64,7 @@ MODEL_CONFIG = {
     },
     "guidance_scale_min": 5,
     "guidance_scale_max": 8,
-    "num_inference_steps": 40
+    "num_inference_steps": 60
 }
 
 # Default negative prompt for stable diffusion
