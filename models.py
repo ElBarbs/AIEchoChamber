@@ -28,6 +28,9 @@ class ModelManager:
         self._vision_processor = None
         self._openai_client = None
 
+        # Load environment variables from .env file
+        load_dotenv(ENV_FILE)
+
     @property
     def text2img_model(self):
         """Lazy-load text2img model on first access."""
