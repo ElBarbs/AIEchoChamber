@@ -57,8 +57,8 @@ def parse_arguments():
         '--txt2img', '-t',
         type=str,
         default='stable-diffusion-xl',
-        choices=['stable-diffusion-xl', 'flux-dev',
-                 'flux-schnell', 'stable-diffusion-3.5'],
+        choices=['stable-diffusion-xl', 'stable-diffusion-3', 'stable-diffusion-3.5',
+                 'flux-schnell', 'flux-dev'],
         help='Text-to-image model to use (default: stable-diffusion-xl)'
     )
 

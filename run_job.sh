@@ -17,6 +17,6 @@ pip install --no-index --upgrade pip
 pip install transformers==4.50.3 torchvision==0.21.0 pillow==11.1.0
 pip install --no-index -r requirements.txt
 pip install --no-index compel-2.0.3-py3-none-any.whl
-python main.py --input "friends.jpg" --iterations 2400 --txt2img "stable-diffusion-3.5"
+python main.py --input "friends.jpg" --iterations 2400 --txt2img "stable-diffusion-3"
 wait
 cp -r $SLURM_TMPDIR/AIEchoChamber/files/output /project/def-vigliens/lbarbier/AIEchoChamber/output

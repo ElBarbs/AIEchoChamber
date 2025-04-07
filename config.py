@@ -14,9 +14,9 @@ MODEL_CONFIG = {
     "txt2img_models": {
         "stable-diffusion-xl": {
             "model_id": "../huggingface/hub/models--stabilityai--stable-diffusion-xl-base-1.0/snapshots/462165984030d82259a11f4367a4eed129e94a7b",
-            "use_compel": True,  # Use Compel for prompt processing
-            "custom_scheduler": True,  # Use custom scheduler
-            "scheduler": "EulerDiscreteScheduler",  # Type of scheduler to use
+            "use_compel": True,
+            "custom_scheduler": True,
+            "scheduler": "EulerDiscreteScheduler",
             "scheduler_kwargs": {
                 "beta_schedule": "scaled_linear",
                 "beta_start": 0.00085,
@@ -29,8 +29,13 @@ MODEL_CONFIG = {
                 "use_karras_sigmas": False,
             }
         },
-        "flux-dev": {
-            "model_id": "black-forest-labs/FLUX.1-dev",
+        "stable-diffusion-3": {
+            "model_id": "stabilityai/stable-diffusion-3-medium-diffusers",
+            "use_compel": False,
+            "custom_scheduler": False,
+        },
+        "stable-diffusion-3.5": {
+            "model_id": "stabilityai/stable-diffusion-3.5-large",
             "use_compel": False,
             "custom_scheduler": False,
         },
@@ -39,11 +44,11 @@ MODEL_CONFIG = {
             "use_compel": False,
             "custom_scheduler": False,
         },
-        "stable-diffusion-3.5": {
-            "model_id": "stabilityai/stable-diffusion-3.5-large",
+        "flux-dev": {
+            "model_id": "black-forest-labs/FLUX.1-dev",
             "use_compel": False,
             "custom_scheduler": False,
-        }
+        },
     },
     "default_txt2img_model": "stable-diffusion-xl",
     "vision_models": {
