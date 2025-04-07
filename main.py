@@ -54,7 +54,7 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        '--txt2img-model', '-t',
+        '--txt2img', '-t',
         type=str,
         default='stable-diffusion-xl',
         choices=['stable-diffusion-xl', 'flux'],
@@ -100,7 +100,7 @@ def main():
             initial_image=initial_image,
             output_dir=run_output_dir,
             description_type=args.vision,
-            txt2img_model=args.txt2img_model,
+            txt2img_model=args.txt2img,
         )
 
         print(f"Starting Echo Chamber with {args.iterations} iterations")
