@@ -114,7 +114,7 @@ def _generate_florence2_description(image, vision_model, vision_processor):
     generated_ids = vision_model.generate(
         input_ids=inputs["input_ids"],
         pixel_values=inputs["pixel_values"],
-        max_new_tokens=77,  # 4096 tokens for 1.5B model
+        max_new_tokens=4096,
         num_beams=3,
         do_sample=False
     )

@@ -1,15 +1,14 @@
 """
-Configuration Module
 Central configuration for the AI Echo Chamber project.
 """
 
 from pathlib import Path
 
-# Base directories
+# Base directories.
 BASE_DIR = Path(__file__).parent
 DEFAULT_OUTPUT_DIR = BASE_DIR / "output"
 
-# Model configuration
+# Model configuration.
 MODEL_CONFIG = {
     "txt2img_models": {
         "stable-diffusion-xl": {
@@ -67,7 +66,7 @@ MODEL_CONFIG = {
     "num_inference_steps": 60
 }
 
-# Default negative prompt for stable diffusion
+# Default negative prompt.
 DEFAULT_NEGATIVE_PROMPT = """
 lowres, text, error, cropped, worst quality, low quality, jpeg artifacts, 
 ugly, duplicate, morbid, mutilated, out of frame, extra fingers, mutated hands, 
@@ -77,13 +76,13 @@ gross proportions, malformed limbs, missing arms, missing legs, extra arms,
 extra legs, fused fingers, too many fingers, long neck, username, watermark, signature
 """
 
-# Image processing
+# Image processing.
 IMAGE_CONFIG = {
     "max_size": 512,  # Maximum dimension for resized images
     "format": "JPEG"  # Format for base64 encoding
 }
 
-# GPT4o-mini prompt template
+# GPT4o-mini prompt template.
 IMAGE_DESCRIPTION_PROMPT = """
 You are an image descriptor with a focus on creative and varied descriptions. When presented with an image:
 
@@ -103,8 +102,8 @@ Your goal is to provide a fresh, insightful perspective on each image that inspi
 Important: Do not include any meta-commentary about your description process. Do not add closing statements about the description's purpose or effectiveness. Simply describe the image and end with the title.
 """
 
-# Path to .env file for environment variables
+# Path to .env file for environment variables.
 ENV_FILE = BASE_DIR / ".env"
 
-# Default number of iterations
-DEFAULT_ITERATIONS = 20
+# Default number of iterations.
+DEFAULT_ITERATIONS = 100
