@@ -1,4 +1,4 @@
-# AI Echo Chamber
+# Recursive Vision
 
 A project that explores the concept of an AI echo chamber by iteratively transforming images through AI-generated descriptions and back to images again.
 
